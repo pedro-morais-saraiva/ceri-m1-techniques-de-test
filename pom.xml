@@ -30,5 +30,10 @@
 
 
     </dependencies>
+    <build>
+
+            <testSourceDirectory>src/test/java/fr/univavignon/pokedex/api</testSourceDirectory>
+
+    </build>
 
 </project>
