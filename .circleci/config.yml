@@ -1,5 +1,6 @@
 version: 2.1
-
+orbs:
+  codecov: codecov/codecov@3.2.4
 jobs:
   build-and-test:
     docker:
@@ -12,13 +13,8 @@ jobs:
           command: mvn -B -DskipTests clean package
       - run:
           name: Test
-          command: mvn test
-      - run: mvn clean test
-      - run: mvn jacoco:report
-      - store_test_results:
-        path: target/surefire-reports
-      - store_artifacts:
-        path: target/site/jacoco
+          command: mvn clean test
+      - codecov/upload
 
 workflows:
   verification:
