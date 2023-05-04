@@ -1,22 +1,33 @@
 version: 2.1
+
 orbs:
-  codecov: codecov/codecov@3.2.4
+  codecov: codecov/codecov@3.1.1
+
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  build-and-test:
-    docker:
-      - image: cimg/openjdk:13.0
-
-    steps:
-      - checkout
-      - run:
-          name: Build
-          command: mvn -B -DskipTests clean package
-      - run:
-          name: Test
-          command: mvn clean test
-      - codecov/upload
-
+       steps:
+         # Checkout the code as the first step.
+         - checkout
+         - restore_cache:
+             keys:
+               - v1-dependencies-{{ checksum "pom.xml" }}
+         # Use mvn clean and package as the standard maven build phase
+         - run:
+             name: Build
+             command: mvn clean
+         - save_cache:
+             paths:
+               - ~/.m2
+             key: v1-dependencies-{{ checksum "pom.xml" }}
+         # Then run your tests!
+         - run:
+             name: Test
+             command: mvn test
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  verification:
+  sample: # This is the name of the workflow, feel free to change it to better match your workflow.
+    # Inside the workflow, you define the jobs you want to run.
     jobs:
       - build-and-test
